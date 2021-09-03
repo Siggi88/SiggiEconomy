@@ -69,12 +69,20 @@ public final class SiggiEconomy extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		File df = getDataFolder();
+		if (!df.exists()) df.mkdirs();
+
 		Util.getCallingPlugin(); // first call resolves reflection
+
+		boolean shouldShowEssentialsMigrationAutoCompletion = false;
+		if (new File(df, "essentials_migrationdata").isDirectory()) {
+			shouldShowEssentialsMigrationAutoCompletion = true;
+		}
 
 		ecoBalTop = new EcoBalTop();
 
 		PluginCommand ecC = getCommand("eco");
-		CommandEco ce = new CommandEco(this);
+		CommandEco ce = new CommandEco(this, shouldShowEssentialsMigrationAutoCompletion);
 		ecC.setExecutor(ce);
 		ecC.setTabCompleter(ce);
 
@@ -98,8 +106,6 @@ public final class SiggiEconomy extends JavaPlugin {
 		tC.setExecutor(ct);
 		tC.setTabCompleter(ct);
 
-		File df = getDataFolder();
-		if (!df.exists()) df.mkdirs();
 		names = new Names(new File(df, "names.dat"), new File(df, "import-uuids.txt"));
 		listener = new EventListener(this);
 		getServer().getPluginManager().registerEvents(listener, this);

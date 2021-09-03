@@ -21,9 +21,11 @@ import org.bukkit.entity.Player;
 public class CommandEco implements CommandExecutor, TabExecutor {
 
 	private final SiggiEconomy plugin;
+	private boolean shouldShowEssentialsMigrationAutoCompletion;
 
-	public CommandEco(SiggiEconomy plugin) {
+	public CommandEco(SiggiEconomy plugin, boolean shouldShowEssentialsMigrationAutoCompletion) {
 		this.plugin = plugin;
+		this.shouldShowEssentialsMigrationAutoCompletion = shouldShowEssentialsMigrationAutoCompletion;
 	}
 
 	@Override
@@ -68,6 +70,7 @@ public class CommandEco implements CommandExecutor, TabExecutor {
 				if (sender.hasPermission("io.siggi.economy.adjust")) {
 					new EssentialsMigrator().doMigration();
 				}
+				shouldShowEssentialsMigrationAutoCompletion = false;
 			}
 			break;
 		}
@@ -86,7 +89,7 @@ public class CommandEco implements CommandExecutor, TabExecutor {
 			if (sender.hasPermission("io.siggi.economy.adjust")) {
 				suggest.accept("adjust");
 			}
-			if (sender.hasPermission("io.siggi.economy.adjust")) {
+			if (shouldShowEssentialsMigrationAutoCompletion && sender.hasPermission("io.siggi.economy.adjust")) {
 				suggest.accept("migratefromessentials");
 			}
 		}
