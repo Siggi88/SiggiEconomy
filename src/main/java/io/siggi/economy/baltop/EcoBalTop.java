@@ -139,6 +139,9 @@ public class EcoBalTop {
 			int pos = (i + 1);
 			TopUser u = topUsers.get(i);
 			String name = Names.get().getName(u.getUser());
+			if (name == null) {
+				name = ChatColor.RED + "(" + u.getUser().toString().toLowerCase() + ")";
+			}
 			p.sendMessage(ChatColor.GOLD + Integer.toString(pos) + ". " + ChatColor.YELLOW + "$" + Util.moneyToString(u.getBalance()) + ChatColor.GOLD + " - " + name);
 		}
 		if (page < maxPage) {
