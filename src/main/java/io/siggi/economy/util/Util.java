@@ -100,4 +100,26 @@ public final class Util {
 		}
 		return info;
 	}
+
+	public static String timeToString(long time) {
+		if (time >= 86400000L) {
+			long days = time / 86400000L;
+			time -= days * 86400000L;
+			long hours = time / 3600000L;
+			return days + "d" + hours + "h";
+		}
+		if (time >= 3600000L) {
+			long hours = time / 3600000L;
+			time -= hours * 3600000L;
+			long minutes = time / 60000L;
+			return hours + "h" + minutes + "m";
+		}
+		if (time >= 60000L) {
+			long minutes = time / 60000L;
+			time -= minutes * 60000L;
+			long seconds = time / 1000L;
+			return minutes + "m" + seconds + "s";
+		}
+		return (time / 1000L) + "s";
+	}
 }
