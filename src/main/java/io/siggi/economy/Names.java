@@ -165,11 +165,13 @@ public class Names {
 		return true;
 	}
 
+	private final ByteArrayOutputStream outBaos = new ByteArrayOutputStream();
 	private void writeEntry(OutputStream out, UUID uuid, String name) throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		writeLong(baos, uuid.getMostSignificantBits());
-		writeLong(baos, uuid.getLeastSignificantBits());
-		writeString(baos, name);
+		outBaos.reset();
+		writeLong(outBaos, uuid.getMostSignificantBits());
+		writeLong(outBaos, uuid.getLeastSignificantBits());
+		writeString(outBaos, name);
+		outBaos.writeTo(out);
 	}
 
 	void close() {
