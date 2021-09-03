@@ -5,14 +5,12 @@ import io.siggi.economy.SiggiEconomy;
 import io.siggi.economy.util.Util;
 import java.io.File;
 import java.util.UUID;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class EssentialsMigrator {
 
 	public void doMigration() {
 		File userDataDir = new File(SiggiEconomy.getInstance().getDataFolder(), "essentials_migrationdata");
-		boolean siggiCore = Bukkit.getPluginManager().getPlugin("SiggiCore") != null;
 		for (File userFile : userDataDir.listFiles()) {
 			try {
 				String fileName = userFile.getName();
