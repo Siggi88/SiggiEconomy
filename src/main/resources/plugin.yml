@@ -1,0 +1,30 @@
+name: SiggiEconomy
+main: io.siggi.economy.SiggiEconomy
+version: 1.0
+author: Siggi
+description: A Plugin.
+api-version: 1.13
+softdepend: [SiggiCore]
+#depend: [NBTTool]
+#permissions:
+#    sample.permission.node:
+#        description: Allow the player to do a certain thing.
+#        default: op
+commands:
+    eco:
+        description: The Economy command
+        usage: /<command>
+    bal:
+        description: The Balance command
+        usage: /<command>
+        aliases: [balance,money]
+    baltop:
+        description: The Balance Top command
+        usage: /<command>
+        aliases: [balancetop]
+    pay:
+        description: The Pay command
+        usage: /<command> [player] [amount]
+    transactions:
+        description: The Transactions command
+        usage: /<command>
