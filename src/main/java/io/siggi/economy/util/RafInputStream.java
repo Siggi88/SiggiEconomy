@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 public class RafInputStream extends InputStream {
 
 	private final RandomAccessFile raf;
-	private int limit;
+	private int limit = -1;
 
 	public RafInputStream(RandomAccessFile raf) {
 		this.raf = raf;
