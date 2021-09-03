@@ -67,7 +67,7 @@ public class CommandBal implements CommandExecutor, TabExecutor {
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 		List<String> suggestions = new ArrayList<>();
 		if (args.length == 1) {
-			Names.get().autofill(alias, suggestions);
+			Names.get().autofill(args[0], suggestions);
 		}
 		return suggestions;
 	}
