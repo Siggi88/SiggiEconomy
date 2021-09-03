@@ -64,29 +64,6 @@ public class CommandEco implements CommandExecutor, TabExecutor {
 				}
 			}
 			break;
-			case "recentlogs": {
-				UUID who = me;
-				if (args.length >= 2) {
-					String whoStr = args[1];
-					who = Names.get().getUUID(whoStr);
-				}
-				EcoUser user = SiggiEconomy.getUser(who);
-				List<EcoTransactionLog> logs = user.getRecentTransactions();
-				sendLogs(sender, logs);
-			}
-			break;
-			case "24hlogs": {
-				long now = System.currentTimeMillis();
-				UUID who = me;
-				if (args.length >= 2) {
-					String whoStr = args[1];
-					who = Names.get().getUUID(whoStr);
-				}
-				EcoUser user = SiggiEconomy.getUser(who);
-				List<EcoTransactionLog> logs = user.getTransactionLogs(now - 86400000L, now);
-				sendLogs(sender, logs);
-			}
-			break;
 			case "migratefromessentials": {
 				if (sender.hasPermission("io.siggi.economy.adjust")) {
 					new EssentialsMigrator().doMigration();
@@ -112,14 +89,10 @@ public class CommandEco implements CommandExecutor, TabExecutor {
 			if (sender.hasPermission("io.siggi.economy.adjust")) {
 				suggest.accept("migratefromessentials");
 			}
-			suggest.accept("recentlogs");
-			suggest.accept("24hlogs");
 		}
 		if (args.length == 2) {
 			switch (args[0]) {
-				case "adjust":
-				case "recentlogs":
-				case "24hlogs": {
+				case "adjust": {
 					Names.get().autofill(args[1], suggestions);
 				}
 				break;
@@ -127,16 +100,4 @@ public class CommandEco implements CommandExecutor, TabExecutor {
 		}
 		return suggestions;
 	}
-
-	private void sendLogs(CommandSender sender, List<EcoTransactionLog> logs) {
-		for (EcoTransactionLog log : logs) {
-			String amountStr = SiggiEconomy.moneyToString(log.getAmount());
-			long quantity = log.getQuantity();
-			if (quantity != 1) {
-				amountStr = amountStr + " x" + quantity + " (" + SiggiEconomy.moneyToString(log.getTotalAmount()) + ")";
-			}
-			sender.sendMessage(ChatColor.GREEN + "" + log.getTime() + ", amount: " + amountStr + ", new bal: " + SiggiEconomy.moneyToString(log.getNewBalance()) + ", info: " + log.getInfo());
-		}
-	}
-
 }
