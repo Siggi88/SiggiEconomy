@@ -20,6 +20,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public final class EcoUser {
 
+	public static final long USERDATA_PREFIX_LENGTH = 84L;
+
 	private long balance = 0L;
 	private long totalCredits = 0L;
 	private long totalDebits = 0L;
@@ -221,7 +223,7 @@ public final class EcoUser {
 				return new EcoTransactionResult(this, log, EcoTransactionResult.Result.TOO_MUCH_MONEY);
 			}
 			try (RandomAccessFile dataF = new RandomAccessFile(dataFile, "rw")) {
-				boolean isNewFile = dataF.length() < 84L;
+				boolean isNewFile = dataF.length() < USERDATA_PREFIX_LENGTH;
 				boolean essentialsSetMoneyWorkaround = false;
 				EcoTransactionLog updatingTransaction = null;
 				try (RandomAccessFile idxF = new RandomAccessFile(idxFile, "rw")) {
@@ -388,12 +390,12 @@ public final class EcoUser {
 		readLock.lock();
 		try {
 			if (dataFile.exists() && idxFile.exists()) {
-				if (dataFile.length() >= 84L) {
+				if (dataFile.length() >= USERDATA_PREFIX_LENGTH) {
 					try (RandomAccessFile dataF = new RandomAccessFile(dataFile, "r")) {
-						dataF.seek(Math.max(84L, dataF.length() - 4096L));
+						dataF.seek(Math.max(USERDATA_PREFIX_LENGTH, dataF.length() - 4096L));
 						try (BufferedReader reader = new BufferedReader(new InputStreamReader(new RafInputStream(dataF)))) {
 							String line;
-							if (dataF.getFilePointer() != 84L) {
+							if (dataF.getFilePointer() != USERDATA_PREFIX_LENGTH) {
 								reader.readLine(); // skip one line that might be incomplete
 							}
 							while ((line = reader.readLine()) != null) {
