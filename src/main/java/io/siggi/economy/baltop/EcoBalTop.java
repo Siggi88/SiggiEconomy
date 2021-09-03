@@ -139,7 +139,7 @@ public class EcoBalTop {
 			int pos = (i + 1);
 			TopUser u = topUsers.get(i);
 			String name = Names.get().getName(u.getUser());
-			p.sendMessage(ChatColor.GOLD + Integer.toString(pos) + ". " + name + " - " + ChatColor.YELLOW + "$" + Util.moneyToString(u.getBalance()));
+			p.sendMessage(ChatColor.GOLD + Integer.toString(pos) + ". " + ChatColor.YELLOW + "$" + Util.moneyToString(u.getBalance()) + ChatColor.GOLD + " - " + name);
 		}
 		if (page < maxPage) {
 			p.sendMessage(ChatColor.GOLD + "For next page, type " + ChatColor.YELLOW + "/baltop " + (page + 1));
