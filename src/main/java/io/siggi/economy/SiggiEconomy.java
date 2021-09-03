@@ -62,9 +62,20 @@ public final class SiggiEconomy extends JavaPlugin {
 		return (negative ? "-" : "") + instance.currencyPrefix + str + instance.currencySuffix;
 	}
 
+	private boolean isBungeeChatApiAvailable = false;
+
+	public static boolean isBungeeChatApiAvailable() {
+		return instance.isBungeeChatApiAvailable;
+	}
+
 	@Override
 	public void onLoad() {
 		instance = this;
+		try {
+			isBungeeChatApiAvailable = Class.forName("net.md_5.bungee.api.chat.BaseComponent") != null;
+		} catch (Exception e) {
+			isBungeeChatApiAvailable = false;
+		}
 	}
 
 	@Override
