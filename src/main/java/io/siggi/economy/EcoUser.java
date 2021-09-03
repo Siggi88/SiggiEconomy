@@ -340,8 +340,8 @@ public final class EcoUser {
 	}
 
 	EcoTransactionLog parseLog(String line) {
-		String version = line.substring(0, line.indexOf(","));
 		try {
+			String version = line.substring(0, line.indexOf(","));
 			switch (version) {
 				case "V1":
 					String[] parts = line.split(",", 7);
