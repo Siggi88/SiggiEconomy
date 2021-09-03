@@ -133,9 +133,9 @@ public class EcoBalTop {
 			return;
 		}
 		p.sendMessage(ChatColor.GOLD + "Top Users (Server Economy: " + ChatColor.YELLOW + "$" + Util.moneyToString(totalMoney) + ChatColor.GOLD + ") (page " + ChatColor.YELLOW + page + ChatColor.GOLD + "/" + ChatColor.YELLOW + maxPage + ChatColor.GOLD + ")");
-		int a = (page - 1) * perPage;
-		int b = a + perPage;
-		for (int i = a; i < b; i++) {
+		int startAt = (page - 1) * perPage;
+		int endAt = Math.min(startAt + perPage, topUsers.size());
+		for (int i = startAt; i < endAt; i++) {
 			int pos = (i + 1);
 			TopUser u = topUsers.get(i);
 			String name = Names.get().getName(u.getUser());
