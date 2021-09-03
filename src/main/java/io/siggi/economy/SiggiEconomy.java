@@ -35,6 +35,33 @@ public final class SiggiEconomy extends JavaPlugin {
 	private Names names;
 	private EventListener listener;
 
+	private String currencyPrefix = "$";
+	private String currencySuffix = "";
+
+	public static String moneyToString(double amount) {
+		boolean negative = false;
+		if (amount < 0.0) {
+			negative = true;
+			amount = -amount;
+		}
+		amount = Math.floor(amount * 100.0) / 100.0;
+		String str = String.format("%.2f", amount);
+		if (!str.contains(".")) {
+			return (negative ? "-" : "") + instance.currencyPrefix + str + instance.currencySuffix;
+		}
+		if (str.endsWith(".0")) {
+			return (negative ? "-" : "") + instance.currencyPrefix + str.substring(0, str.length() - 2) + instance.currencySuffix;
+		}
+		if (str.endsWith(".00")) {
+			return (negative ? "-" : "") + instance.currencyPrefix + str.substring(0, str.length() - 3) + instance.currencySuffix;
+		}
+		if (str.indexOf(".") == str.length() - 2) {
+			str = str + "0";
+		}
+		SiggiEconomy plugin = getInstance();
+		return (negative ? "-" : "") + instance.currencyPrefix + str + instance.currencySuffix;
+	}
+
 	@Override
 	public void onLoad() {
 		instance = this;

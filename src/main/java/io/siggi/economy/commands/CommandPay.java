@@ -4,7 +4,7 @@ import io.siggi.economy.EcoTransactionResult;
 import io.siggi.economy.EcoUser;
 import io.siggi.economy.Names;
 import io.siggi.economy.SiggiEconomy;
-import io.siggi.economy.util.Util;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -57,10 +57,10 @@ public class CommandPay implements CommandExecutor, TabExecutor {
 				p.sendMessage(ChatColor.RED + "Something went wrong: " + result.getResult().getDescription());
 				return true;
 			}
-			p.sendMessage(ChatColor.GOLD + "Paid " + ChatColor.YELLOW + "$" + Util.moneyToString(amount) + ChatColor.GOLD + " to " + ChatColor.YELLOW + recipientName + ChatColor.GOLD + "!");
+			p.sendMessage(ChatColor.GOLD + "Paid " + ChatColor.YELLOW + SiggiEconomy.moneyToString(amount) + ChatColor.GOLD + " to " + ChatColor.YELLOW + recipientName + ChatColor.GOLD + "!");
 			Player recipient = Bukkit.getPlayer(recipientUUID);
 			if (recipient != null) {
-				recipient.sendMessage(ChatColor.GOLD + "You received " + ChatColor.YELLOW + "$" + Util.moneyToString(amount) + ChatColor.GOLD + " from " + ChatColor.YELLOW + myName + ChatColor.GOLD + "!");
+				recipient.sendMessage(ChatColor.GOLD + "You received " + ChatColor.YELLOW + SiggiEconomy.moneyToString(amount) + ChatColor.GOLD + " from " + ChatColor.YELLOW + myName + ChatColor.GOLD + "!");
 			}
 		} catch (Exception e) {
 			p.sendMessage(ChatColor.GOLD + "Usage: " + ChatColor.YELLOW + "/pay [recipient] [amount]");

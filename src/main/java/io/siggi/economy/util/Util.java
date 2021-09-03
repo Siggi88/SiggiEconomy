@@ -72,24 +72,6 @@ public final class Util {
 		return sb.toString();
 	}
 
-	public static String moneyToString(double amount) {
-		amount = Math.floor(amount * 100.0) / 100.0;
-		String str = String.format("%.2f", amount);
-		if (!str.contains(".")) {
-			return str;
-		}
-		if (str.endsWith(".0")) {
-			return str.substring(0, str.length() - 2);
-		}
-		if (str.endsWith(".00")) {
-			return str.substring(0, str.length() - 3);
-		}
-		if (str.indexOf(".") == str.length() - 2) {
-			str = str + "0";
-		}
-		return str;
-	}
-
 	public static UUID uuidFromString(String uuid) {
 		return UUID.fromString(uuid.replace("-", "").replaceAll(
 				"([0-9A-Fa-f]{8})([0-9A-Fa-f]{4})([0-9A-Fa-f]{4})([0-9A-Fa-f]{4})([0-9A-Fa-f]{12})",

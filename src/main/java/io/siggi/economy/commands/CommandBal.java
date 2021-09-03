@@ -4,7 +4,7 @@ import io.siggi.economy.EcoHold;
 import io.siggi.economy.EcoUser;
 import io.siggi.economy.Names;
 import io.siggi.economy.SiggiEconomy;
-import io.siggi.economy.util.Util;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -46,19 +46,19 @@ public class CommandBal implements CommandExecutor, TabExecutor {
 		if (me == null || who.equals(me)) {
 			double balance = user.getBalance();
 			double availableBalance = user.getAvailableBalance();
-			sender.sendMessage(ChatColor.GOLD + "Your balance: " + ChatColor.YELLOW + "$" + Util.moneyToString(balance));
+			sender.sendMessage(ChatColor.GOLD + "Your balance: " + ChatColor.YELLOW + SiggiEconomy.moneyToString(balance));
 			if (balance != availableBalance) {
-				sender.sendMessage(ChatColor.GOLD + "Available balance: " + ChatColor.YELLOW + "$" + Util.moneyToString(availableBalance));
+				sender.sendMessage(ChatColor.GOLD + "Available balance: " + ChatColor.YELLOW + SiggiEconomy.moneyToString(availableBalance));
 			}
 			List<EcoHold> holds = user.getHolds();
 			if (!holds.isEmpty()) {
 				sender.sendMessage(ChatColor.GOLD + "Funds placed on hold:");
 				for (EcoHold hold : holds) {
-					sender.sendMessage(ChatColor.YELLOW + "$" + Util.moneyToString(hold.getAmount() * hold.getQuantity()) + ChatColor.GOLD + " - " + hold.getInfo());
+					sender.sendMessage(ChatColor.YELLOW + SiggiEconomy.moneyToString(hold.getAmount() * hold.getQuantity()) + ChatColor.GOLD + " - " + hold.getInfo());
 				}
 			}
 		} else {
-			sender.sendMessage(ChatColor.YELLOW + username + ChatColor.GOLD + "'s balance: " + ChatColor.YELLOW + "$" + Util.moneyToString(user.getBalance()) + ChatColor.GOLD + ".");
+			sender.sendMessage(ChatColor.YELLOW + username + ChatColor.GOLD + "'s balance: " + ChatColor.YELLOW + SiggiEconomy.moneyToString(user.getBalance()) + ChatColor.GOLD + ".");
 		}
 		return true;
 	}

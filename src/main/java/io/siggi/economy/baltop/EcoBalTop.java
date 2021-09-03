@@ -3,7 +3,6 @@ package io.siggi.economy.baltop;
 import io.siggi.economy.EcoUser;
 import io.siggi.economy.Names;
 import io.siggi.economy.SiggiEconomy;
-import io.siggi.economy.util.Util;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -132,7 +131,7 @@ public class EcoBalTop {
 			p.sendMessage(ChatColor.GOLD + "Enter a page number between " + ChatColor.YELLOW + "1" + ChatColor.GOLD + " and " + ChatColor.YELLOW + maxPage + ChatColor.GOLD + ".");
 			return;
 		}
-		p.sendMessage(ChatColor.GOLD + "Top Users (Server Economy: " + ChatColor.YELLOW + "$" + Util.moneyToString(totalMoney) + ChatColor.GOLD + ") (page " + ChatColor.YELLOW + page + ChatColor.GOLD + "/" + ChatColor.YELLOW + maxPage + ChatColor.GOLD + ")");
+		p.sendMessage(ChatColor.GOLD + "Top Users (Server Economy: " + ChatColor.YELLOW + SiggiEconomy.moneyToString(totalMoney) + ChatColor.GOLD + ") (page " + ChatColor.YELLOW + page + ChatColor.GOLD + "/" + ChatColor.YELLOW + maxPage + ChatColor.GOLD + ")");
 		int startAt = (page - 1) * perPage;
 		int endAt = Math.min(startAt + perPage, topUsers.size());
 		for (int i = startAt; i < endAt; i++) {
@@ -142,7 +141,7 @@ public class EcoBalTop {
 			if (name == null) {
 				name = ChatColor.RED + "(" + u.getUser().toString().toLowerCase() + ")";
 			}
-			p.sendMessage(ChatColor.GOLD + Integer.toString(pos) + ". " + ChatColor.YELLOW + "$" + Util.moneyToString(u.getBalance()) + ChatColor.GOLD + " - " + name);
+			p.sendMessage(ChatColor.GOLD + Integer.toString(pos) + ". " + ChatColor.YELLOW + SiggiEconomy.moneyToString(u.getBalance()) + ChatColor.GOLD + " - " + name);
 		}
 		if (page < maxPage) {
 			p.sendMessage(ChatColor.GOLD + "For next page, type " + ChatColor.YELLOW + "/baltop " + (page + 1));
