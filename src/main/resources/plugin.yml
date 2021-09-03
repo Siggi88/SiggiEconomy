@@ -4,12 +4,6 @@ version: 1.0
 author: Siggi
 description: A Plugin.
 api-version: 1.13
-softdepend: [SiggiCore]
-#depend: [NBTTool]
-#permissions:
-#    sample.permission.node:
-#        description: Allow the player to do a certain thing.
-#        default: op
 commands:
     eco:
         description: The Economy command
