@@ -125,6 +125,27 @@ public final class SiggiEconomy extends JavaPlugin {
 	}
 
 	/**
+	 * Get an EcoUser by name (not recommended! use {@link SiggiEconomy#getUser(UUID)} instead!).
+	 *
+	 * @param name their name
+	 * @return the EcoUser
+	 */
+	public static EcoUser getUser(String name) {
+		return instance.getUser0(name);
+	}
+
+	private EcoUser getUser0(String name) {
+		if (name == null) {
+			throw new NullPointerException("name cannot be null");
+		}
+		UUID uuid = names.getUUID(name);
+		if (uuid == null) {
+			names.set(uuid = Names.offlineUuid(name), name);
+		}
+		return getUser(uuid);
+	}
+
+	/**
 	 * Get a Set listing all known users with at least one transaction.
 	 *
 	 * @return
