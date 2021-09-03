@@ -94,6 +94,9 @@ public class Names {
 			readLock.lock();
 			String partLower = part.toLowerCase();
 			for (Map.Entry<String, UUID> entries : nameToUuid.entrySet()) {
+				if (suggestions.size() >= 100) {
+					break;
+				}
 				if (entries.getKey().startsWith(partLower)) {
 					suggestions.add(uuidToName.get(entries.getValue()));
 				}
