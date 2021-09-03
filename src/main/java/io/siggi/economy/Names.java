@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static io.siggi.economy.util.IO.*;
 
@@ -20,6 +21,10 @@ public class Names {
 	private final Map<UUID, String> uuidToName = new HashMap<>();
 	private final Map<String, UUID> nameToUuid = new HashMap<>();
 	private FileOutputStream out;
+
+	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+	private final ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
+	private final ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();
 
 	public Names(File file, File importFile) {
 		this.file = file;
@@ -42,39 +47,59 @@ public class Names {
 	}
 
 	public String getName(UUID uuid) {
-		return uuidToName.get(uuid);
+		try {
+			readLock.lock();
+			return uuidToName.get(uuid);
+		} finally {
+			readLock.unlock();
+		}
 	}
 
 	public UUID getUUID(String name) {
-		return nameToUuid.get(name.toLowerCase());
+		try {
+			readLock.lock();
+			return nameToUuid.get(name.toLowerCase());
+		} finally {
+			readLock.unlock();
+		}
 	}
 
 	void set(UUID uuid, String name) {
-		String oldName = uuidToName.get(uuid);
-		if (oldName != null) {
-			if (oldName.equals(name)) return;
-			nameToUuid.remove(oldName.toLowerCase(), uuid);
-		}
-		UUID oldUuid = nameToUuid.get(name.toLowerCase());
-		if (oldUuid != null) {
-			uuidToName.remove(oldUuid, name);
-		}
-		uuidToName.put(uuid, name);
-		nameToUuid.put(name.toLowerCase(), uuid);
-		if (out != null) {
-			try {
-				writeEntry(out, uuid, name);
-			} catch (Exception e) {
+		try {
+			writeLock.lock();
+			String oldName = uuidToName.get(uuid);
+			if (oldName != null) {
+				if (oldName.equals(name)) return;
+				nameToUuid.remove(oldName.toLowerCase(), uuid);
 			}
+			UUID oldUuid = nameToUuid.get(name.toLowerCase());
+			if (oldUuid != null) {
+				uuidToName.remove(oldUuid, name);
+			}
+			uuidToName.put(uuid, name);
+			nameToUuid.put(name.toLowerCase(), uuid);
+			if (out != null) {
+				try {
+					writeEntry(out, uuid, name);
+				} catch (Exception e) {
+				}
+			}
+		} finally {
+			writeLock.unlock();
 		}
 	}
 
 	public void autofill(String part, Collection<String> suggestions) {
-		String partLower = part.toLowerCase();
-		for (Map.Entry<String, UUID> entries : nameToUuid.entrySet()) {
-			if (entries.getKey().startsWith(partLower)) {
-				suggestions.add(uuidToName.get(entries.getValue()));
+		try {
+			readLock.lock();
+			String partLower = part.toLowerCase();
+			for (Map.Entry<String, UUID> entries : nameToUuid.entrySet()) {
+				if (entries.getKey().startsWith(partLower)) {
+					suggestions.add(uuidToName.get(entries.getValue()));
+				}
 			}
+		} finally {
+			readLock.unlock();
 		}
 	}
 
@@ -146,9 +171,11 @@ public class Names {
 
 	void close() {
 		try {
+			writeLock.lock();
 			out.close();
 		} catch (Exception e) {
 		} finally {
+			writeLock.unlock();
 			out = null;
 		}
 	}
