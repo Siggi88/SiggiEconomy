@@ -1,5 +1,7 @@
 package io.siggi.economy;
 
+import java.util.Objects;
+
 import static io.siggi.economy.util.Util.processInfo;
 
 public class EcoTransactionLog {
@@ -62,5 +64,25 @@ public class EcoTransactionLog {
 
 	public double getNewBalance() {
 		return newBalance;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		EcoTransactionLog that = (EcoTransactionLog) o;
+		return time == that.time &&
+				Double.compare(that.amount, amount) == 0 &&
+				quantity == that.quantity &&
+				Double.compare(that.newBalance, newBalance) == 0 &&
+				user.getUUID().equals(that.user.getUUID()) &&
+				plugin.equals(that.plugin) &&
+				Objects.equals(rawInfo, that.rawInfo) &&
+				Objects.equals(info, that.info);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(user.getUUID(), time, amount, quantity, plugin, rawInfo, info, newBalance);
 	}
 }
