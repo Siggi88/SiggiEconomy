@@ -67,6 +67,8 @@ public class IO {
 			}
 			out.write(0x80 | ((bytes.length >> 8) & 0xff));
 			out.write((bytes.length) & 0xff);
+		} else {
+			out.write((bytes.length) & 0xff);
 		}
 		out.write(bytes);
 	}
