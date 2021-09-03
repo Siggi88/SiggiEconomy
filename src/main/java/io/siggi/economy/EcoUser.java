@@ -2,19 +2,14 @@ package io.siggi.economy;
 
 import io.siggi.economy.util.RafInputStream;
 import io.siggi.economy.util.Util;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -26,12 +21,12 @@ public final class EcoUser {
 	private long totalCredits = 0L;
 	private long totalDebits = 0L;
 	private final UUID uuid;
-	private final File dataFile;
-	private final File idxFile;
-	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+	final File dataFile;
+	final File idxFile;
 	private final Set<WeakReference<EcoHold>> holds = new HashSet<>();
-	private final Lock readLock = lock.readLock();
-	private final Lock writeLock = lock.writeLock();
+	final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+	final Lock readLock = lock.readLock();
+	final Lock writeLock = lock.writeLock();
 
 	EcoUser(UUID uuid) {
 		if (uuid == null) {
@@ -67,6 +62,15 @@ public final class EcoUser {
 			} catch (IOException e) {
 			}
 		}
+	}
+
+	/**
+	 * Get this user's UUID.
+	 *
+	 * @return this user's UUID
+	 */
+	public UUID getUUID() {
+		return uuid;
 	}
 
 	/**
@@ -322,104 +326,20 @@ public final class EcoUser {
 	}
 
 	/**
-	 * Get all transactions within a period of time.
+	 * Get a transaction list iterator starting at a certain time.
 	 *
-	 * @param startTime The earliest time to check
-	 * @param endTime The latest time to check
-	 * @return list of transactions
+	 * @param startTime The time to place the pointer
+	 * @return list iterator of transactions
 	 */
-	public List<EcoTransactionLog> getTransactionLogs(long startTime, long endTime) {
-		if (endTime < startTime) {
-			throw new IllegalArgumentException("endTime cannot be earlier than startTime");
-		}
-		List<EcoTransactionLog> logs = new LinkedList<>();
-		readLock.lock();
-		try {
-			if (dataFile.exists() && idxFile.exists()) {
-				long startDay = startTime / 86400000L;
-				long startPos = -1L;
-				try (RandomAccessFile idxF = new RandomAccessFile(idxFile, "r")) {
-					idxF.seek(0L);
-					while (startPos == -1L) {
-						if (idxF.length() - idxF.getFilePointer() < 16) {
-							break;
-						}
-						long day = idxF.readLong();
-						long pos = idxF.readLong();
-						if (day >= startDay) {
-							startPos = pos;
-						}
-					}
-				}
-				if (startPos != -1) {
-					try (RandomAccessFile dataF = new RandomAccessFile(dataFile, "r")) {
-						dataF.seek(startPos);
-						try (BufferedReader reader = new BufferedReader(new InputStreamReader(new RafInputStream(dataF)))) {
-							String line;
-							while ((line = reader.readLine()) != null) {
-								EcoTransactionLog log = parseLog(line);
-								if (log != null) {
-									long t = log.getTime();
-									if (t >= startTime) {
-										if (t > endTime) {
-											break;
-										}
-										logs.add(log);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-		} finally {
-			readLock.unlock();
-		}
-		return logs;
-	}
-
-	/**
-	 * Get recent transactions that are inside the last 4096 bytes of the
-	 * transaction log file.
-	 *
-	 * @return list of transactions
-	 */
-	public List<EcoTransactionLog> getRecentTransactions() {
-		List<EcoTransactionLog> logs = new LinkedList<>();
-		readLock.lock();
-		try {
-			if (dataFile.exists() && idxFile.exists()) {
-				if (dataFile.length() >= USERDATA_PREFIX_LENGTH) {
-					try (RandomAccessFile dataF = new RandomAccessFile(dataFile, "r")) {
-						dataF.seek(Math.max(USERDATA_PREFIX_LENGTH, dataF.length() - 4096L));
-						try (BufferedReader reader = new BufferedReader(new InputStreamReader(new RafInputStream(dataF)))) {
-							String line;
-							if (dataF.getFilePointer() != USERDATA_PREFIX_LENGTH) {
-								reader.readLine(); // skip one line that might be incomplete
-							}
-							while ((line = reader.readLine()) != null) {
-								EcoTransactionLog log = parseLog(line);
-								if (log != null) {
-									logs.add(log);
-								}
-							}
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-		} finally {
-			readLock.unlock();
-		}
-		return logs;
+	public ListIterator<EcoTransactionLog> getTransactionLogs(long startTime) {
+		return new EcoTransactionLogListIterator(this, startTime);
 	}
 
 	private String createLog(long time, long amount, long quantity, long newBalance, String plugin, String info) {
 		return "V1," + time + "," + amount + "," + quantity + "," + newBalance + "," + plugin + "," + info;
 	}
 
-	private EcoTransactionLog parseLog(String line) {
+	EcoTransactionLog parseLog(String line) {
 		String version = line.substring(0, line.indexOf(","));
 		try {
 			switch (version) {
@@ -548,7 +468,7 @@ public final class EcoUser {
 		readLock.lock();
 		try {
 			List<EcoHold> h = new ArrayList<>(holds.size());
-			for (Iterator<WeakReference<EcoHold>> it = holds.iterator(); it.hasNext();) {
+			for (Iterator<WeakReference<EcoHold>> it = holds.iterator(); it.hasNext(); ) {
 				WeakReference<EcoHold> ref = it.next();
 				if (ref == null) {
 					it.remove();
